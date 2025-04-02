@@ -1,0 +1,34 @@
+﻿using Assignment.AzureWeather.Infrastructure.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Assignment.AzureWeather.Infrastructure.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection ApplyWeatherServiceSettings(this IServiceCollection services)
+    {
+        services.AddOptions<WeatherServiceConfiguration>()
+            .Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration
+                    .GetSection(WeatherServiceConfiguration.SectionName)
+                    .Bind(settings);
+            });
+
+        return services;
+    }
+    
+    public static IServiceCollection ApplyLocationSettings(this IServiceCollection services)
+    {
+        services.AddOptions<WeatherWorkerConfiguration>()
+            .Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration
+                    .GetSection(WeatherWorkerConfiguration.SectionName)
+                    .Bind(settings);
+            });
+
+        return services;
+    }
+}
