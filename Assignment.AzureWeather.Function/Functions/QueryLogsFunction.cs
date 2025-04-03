@@ -20,8 +20,7 @@ public class QueryLogsFunction : BaseFunction
     [Function("QueryLogs")]
     public async Task<HttpResponseData> RunAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "logs")]
-        HttpRequestData req,
-        FunctionContext executionContext)
+        HttpRequestData req)
     {
         try
         {
