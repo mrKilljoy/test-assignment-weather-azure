@@ -53,8 +53,9 @@ public class WeatherLogService : IWeatherLogService
         var containerClient =
             _blobServiceClient.GetBlobContainerClient(WeatherLogServiceConstants.ContainerName);
         var blobClient = containerClient.GetBlobClient(key);
-        
-        if (await blobClient.ExistsAsync())
+
+        var blobExists = await blobClient.ExistsAsync();
+        if (blobExists?.Value ?? default)
         {
             var response = await blobClient.DownloadContentAsync();
             return response.Value?.Content?.ToString();
