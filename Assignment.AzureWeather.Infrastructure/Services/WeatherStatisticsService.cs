@@ -1,5 +1,6 @@
 ﻿using Assignment.AzureWeather.Application.DTO;
 using Assignment.AzureWeather.Application.Interfaces;
+using Assignment.AzureWeather.Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Assignment.AzureWeather.Infrastructure.Services;
@@ -21,8 +22,8 @@ public class WeatherStatisticsService : IWeatherStatisticsService
         {
             var items = await _repository.GetAllAsync();
             var result = items
-                .Select(x => new WeatherStatisticsDto() { City = x.City, Country = x.Country, Temperature = x.Temperature })
-                .ToList(); // todo: map
+                .Select(Map)
+                .ToList();
 
             return result;
         }
@@ -31,5 +32,16 @@ public class WeatherStatisticsService : IWeatherStatisticsService
             _logger.LogError(ex, nameof(GetStatistics));
             throw;
         }
+    }
+
+    private WeatherStatisticsDto Map(WeatherInfo sourceModel)
+    {
+        return new WeatherStatisticsDto()
+        {
+            City = sourceModel.City,
+            Country = sourceModel.Country,
+            Temperature = sourceModel.Temperature,
+            DateCreated = sourceModel.DateCreated
+        };
     }
 }

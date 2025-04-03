@@ -1,4 +1,5 @@
 ﻿using Assignment.AzureWeather.Application.Interfaces;
+using Assignment.AzureWeather.Infrastructure.Exceptions;
 using Assignment.AzureWeather.Infrastructure.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -43,5 +44,7 @@ public class CheckWeatherFunction
         }
     }
 
-    private string GetCityName() => _configuration["WeatherDataCityName"] ?? throw new Exception("Location not provided."); // todo: choose type?
+    private string GetCityName() =>
+        _configuration["WeatherDataCityName"] ??
+        throw new ConfigurationItemNotFoundException("WeatherDataCityName");
 }

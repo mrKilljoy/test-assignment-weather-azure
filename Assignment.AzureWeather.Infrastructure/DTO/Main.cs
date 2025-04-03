@@ -1,6 +1,5 @@
 ﻿namespace Assignment.AzureWeather.Infrastructure.DTO;
 
-// todo: remove redundant fields?
 public class Main
 {
     public decimal Temp { get; set; }

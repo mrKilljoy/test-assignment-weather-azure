@@ -5,7 +5,6 @@ using Assignment.AzureWeather.Infrastructure.Constants;
 using Assignment.AzureWeather.Infrastructure.Interfaces;
 using Azure.Data.Tables;
 using Azure.Storage.Blobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Assignment.AzureWeather.Infrastructure.Services;
@@ -13,12 +12,17 @@ namespace Assignment.AzureWeather.Infrastructure.Services;
 public class WeatherLogService : IWeatherLogService
 {
     private readonly ILogger<WeatherLogService> _logger;
-    private readonly IConfiguration _configuration;
+    private readonly BlobServiceClient _blobServiceClient;
+    private readonly TableServiceClient _tableServiceClient;
 
-    public WeatherLogService(ILogger<WeatherLogService> logger, IConfiguration configuration)
+    public WeatherLogService(
+        ILogger<WeatherLogService> logger,
+        BlobServiceClient blobServiceClient,
+        TableServiceClient tableServiceClient)
     {
         _logger = logger;
-        _configuration = configuration;
+        _blobServiceClient = blobServiceClient;
+        _tableServiceClient = tableServiceClient;
     }
     
     public async Task LogAsync(bool isSuccess, string content = null)
@@ -46,11 +50,9 @@ public class WeatherLogService : IWeatherLogService
 
     public async Task<string> GetLogPayloadAsync(string key)
     {
-        string connectionString = _configuration["AzureWebJobsStorage"];
-
-        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(WeatherLogServiceConstants.ContainerName);
-        BlobClient blobClient = containerClient.GetBlobClient(key);
+        var containerClient =
+            _blobServiceClient.GetBlobContainerClient(WeatherLogServiceConstants.ContainerName);
+        var blobClient = containerClient.GetBlobClient(key);
         
         if (await blobClient.ExistsAsync())
         {
@@ -63,8 +65,7 @@ public class WeatherLogService : IWeatherLogService
 
     public async Task<IEnumerable<WeatherLogDto>> QueryAsync(DateTime from, DateTime to)
     {
-        string connectionString = _configuration["AzureWebJobsStorage"];
-        TableClient tableClient = new TableClient(connectionString, WeatherLogServiceConstants.TableName);
+        var tableClient = _tableServiceClient.GetTableClient(WeatherLogServiceConstants.TableName);
 
         var partitionKeys = BuildPartitionKeys(from, to);
         var items = new List<WeatherLogDto>();
@@ -89,11 +90,10 @@ public class WeatherLogService : IWeatherLogService
 
     private async Task CreateLogAsync(DateTime date, bool isSuccess)
     {
-        var connectionString = _configuration["AzureWebJobsStorage"];
         string partitionKey = date.ToString(WeatherLogServiceConstants.PartitionKeyFormat);
         string rowKey = date.ToString(WeatherLogServiceConstants.RowKeyFormat);
         
-        TableClient tableClient = new TableClient(connectionString, WeatherLogServiceConstants.TableName);
+        var tableClient = _tableServiceClient.GetTableClient(WeatherLogServiceConstants.TableName);
         await tableClient.CreateIfNotExistsAsync();
 
         string status = isSuccess ? "Success" : "Failure";
@@ -108,13 +108,12 @@ public class WeatherLogService : IWeatherLogService
 
     private async Task SavePayloadAsync(DateTime date, string content)
     {
-        var connectionString = _configuration["AzureWebJobsStorage"];
         string blobName = WeatherLogServiceHelper.BuildLogPayloadKey(date);
         
-        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(WeatherLogServiceConstants.ContainerName);
+        var containerClient =
+            _blobServiceClient.GetBlobContainerClient(WeatherLogServiceConstants.ContainerName);
         await containerClient.CreateIfNotExistsAsync();
-        BlobClient blobClient = containerClient.GetBlobClient(blobName);
+        var blobClient = containerClient.GetBlobClient(blobName);
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         await blobClient.UploadAsync(stream, overwrite: true);

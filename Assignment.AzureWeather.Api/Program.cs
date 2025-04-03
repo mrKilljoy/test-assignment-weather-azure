@@ -1,9 +1,9 @@
+using Assignment.AzureWeather.Api.Infrastructure.Constants;
+using Assignment.AzureWeather.Api.Infrastructure.Extensions;
 using Assignment.AzureWeather.Api.Infrastructure.Filters;
 using Assignment.AzureWeather.Api.Services;
-using Assignment.AzureWeather.Application.Interfaces;
 using Assignment.AzureWeather.Infrastructure.Extensions;
 using Assignment.AzureWeather.Infrastructure.Persistence;
-using Assignment.AzureWeather.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment.AzureWeather.Api;
@@ -16,21 +16,23 @@ public class Program
 
         builder.Services.AddLogging(x => x.AddDebug());
         builder.Services.AddHttpClient();
-        builder.Services.ApplyLocationSettings();
+        
+        builder.Services.ApplyWeatherWorkerSettings();
         builder.Services.ApplyWeatherServiceSettings();
+        
         builder.Services.AddHostedService<WeatherBackgroundService>();
 
-        builder.Services.AddDbContext<WeatherDbContext>(x => x.UseInMemoryDatabase("test-db")); // todo: check
+        builder.Services.AddPersistence(builder.Configuration);
 
-        builder.Services.AddTransient<IWeatherService, WeatherService>();
-        builder.Services.AddTransient<IWeatherInfoRepository, WeatherInfoRepository>();
-        builder.Services.AddTransient<IWeatherStatisticsService, WeatherStatisticsService>();
+        builder.Services.RegisterApiDependencies();
         
         builder.Services.AddControllers(x => x.Filters.Add<CustomGlobalExceptionFilter>());
+        builder.Services.AddCustomCorsPolicy(builder.Configuration);
         
         var app = builder.Build();
         
         app.UseRouting();
+        app.UseCors(ApiConstants.CustomCorsPolicyName);
         app.MapControllers();
 
         await app.RunAsync();

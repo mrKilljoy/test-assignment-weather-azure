@@ -41,17 +41,12 @@ public class WeatherService : IWeatherService
             {
                 var rawContent = await response.Content.ReadAsStringAsync();
                 
-                var responseModel = JsonConvert.DeserializeObject<WeatherResponseDto>(rawContent);
+                var responseModel = JsonConvert.DeserializeObject<WeatherResponseDto>(rawContent) ??
+                                    throw new JsonSerializationException(nameof(WeatherResponseDto));
                 
                 _logger.LogTrace($"Weather data for '{location}' received successfully.");
 
-                return new WeatherDataDto()
-                {
-                    City = responseModel?.Name,
-                    Country = responseModel?.Sys?.Country,
-                    Temperature = responseModel?.Main?.Temp ?? default,
-                    RawData = rawContent
-                };
+                return Map(responseModel, rawContent);
             }
 
             _logger.LogTrace($"Failed to acquire weather data for '{location}'.");
@@ -94,4 +89,15 @@ public class WeatherService : IWeatherService
     private string GetKey() => _config.ApiKey;
 
     private string GetBaseUrl() => _config.ServiceUrl;
+
+    private WeatherDataDto Map(WeatherResponseDto sourceModel, string content)
+    {
+        return new WeatherDataDto()
+        {
+            City = sourceModel.Name,
+            Country = sourceModel.Sys?.Country,
+            Temperature = sourceModel.Main?.Temp ?? default,
+            RawData = content
+        };
+    }
 }
