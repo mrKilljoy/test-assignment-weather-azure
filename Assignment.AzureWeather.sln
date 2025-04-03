@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assignment.AzureWeather.Inf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assignment.AzureWeather.Api", "Assignment.AzureWeather.Api\Assignment.AzureWeather.Api.csproj", "{DB8710D5-7D93-462B-91A2-7CA4A532A69A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assignment.AzureWeather.Tests", "Assignment.AzureWeather.Tests\Assignment.AzureWeather.Tests.csproj", "{890F1F4C-74A7-4C0E-85A1-BED2D1C50B10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{DB8710D5-7D93-462B-91A2-7CA4A532A69A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB8710D5-7D93-462B-91A2-7CA4A532A69A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB8710D5-7D93-462B-91A2-7CA4A532A69A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{890F1F4C-74A7-4C0E-85A1-BED2D1C50B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{890F1F4C-74A7-4C0E-85A1-BED2D1C50B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{890F1F4C-74A7-4C0E-85A1-BED2D1C50B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{890F1F4C-74A7-4C0E-85A1-BED2D1C50B10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
