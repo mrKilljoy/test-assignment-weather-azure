@@ -1,6 +1,9 @@
 ﻿using Assignment.AzureWeather.Application.Interfaces;
 using Assignment.AzureWeather.Infrastructure.Configuration;
+using Assignment.AzureWeather.Infrastructure.DTO.Requests;
 using Assignment.AzureWeather.Infrastructure.Services;
+using Assignment.AzureWeather.Infrastructure.Validation;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,6 +42,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IWeatherService, WeatherService>();
         services.AddTransient<IWeatherInfoRepository, WeatherInfoRepository>();
         services.AddTransient<IWeatherStatisticsService, WeatherStatisticsService>();
+        services.AddTransient<IValidator<GetWeatherRequest>, DateRangeValidator>();
 
         return services;
     }

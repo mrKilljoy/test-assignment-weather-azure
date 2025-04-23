@@ -34,6 +34,24 @@ public class WeatherStatisticsService : IWeatherStatisticsService
         }
     }
 
+    public async Task<List<WeatherStatisticsDto>> GetStatistics(DateTime from, DateTime to)
+    {
+        try
+        {
+            var items = await _repository.GetByDatesAsync(from, to);
+            var result = items
+                .Select(Map)
+                .ToList();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, nameof(GetStatistics));
+            throw;
+        }
+    }
+
     private WeatherStatisticsDto Map(WeatherInfo sourceModel)
     {
         return new WeatherStatisticsDto()

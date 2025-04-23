@@ -1,4 +1,7 @@
 ﻿using Assignment.AzureWeather.Application.Interfaces;
+using Assignment.AzureWeather.Infrastructure.DTO.Requests;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment.AzureWeather.Api.Controllers;
@@ -17,11 +20,22 @@ public class WeatherController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(
+        [FromQuery]GetWeatherRequest request,
+        [FromServices]IValidator<GetWeatherRequest> validator)
     {
         try
         {
-            var result = await _statisticsService.GetStatistics();
+            var validation = await validator.ValidateAsync(request);
+            if (!validation.IsValid)
+            {
+                validation.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            
+            var result = request is { From: not null, To: not null } ?
+                await _statisticsService.GetStatistics(request.From.Value, request.To.Value) :
+                await _statisticsService.GetStatistics();
             return Ok(result);
         }
         catch (Exception ex)

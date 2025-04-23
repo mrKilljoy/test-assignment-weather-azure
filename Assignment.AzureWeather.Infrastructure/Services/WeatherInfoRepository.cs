@@ -24,4 +24,12 @@ public class WeatherInfoRepository : IWeatherInfoRepository
     {
         return await _dbContext.WeatherEntries.AsNoTracking().ToListAsync();
     }
+
+    public async Task<IEnumerable<WeatherInfo>> GetByDatesAsync(DateTime from, DateTime to)
+    {
+        return await _dbContext.WeatherEntries
+            .AsNoTracking()
+            .Where(x => x.DateCreated.Date >= from.Date && x.DateCreated.Date <= to.Date)
+            .ToListAsync();
+    }
 }

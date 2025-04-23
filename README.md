@@ -6,6 +6,7 @@ A solution that includes a couple independent services: a service with Azure Fun
 * Default frontend URL: http://localhost:3000 (can be changed)
 * Backend uses the persistence layer based on MSSQL and EF core, so an initial migration is required before using the service
 * Both services should be configured before first use
+* By default, the available API (`api/weather`) returns all existing weather entries. However, it is possible to limit the resulting set by using `from` and `to` query parameters and specifying initial values (the suggested date format is 'YYYY-mm-DD')
 
 An example of test configuration for _Assignment.AzureWeather.Function_:
 
