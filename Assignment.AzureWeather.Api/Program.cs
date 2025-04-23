@@ -3,8 +3,6 @@ using Assignment.AzureWeather.Api.Infrastructure.Extensions;
 using Assignment.AzureWeather.Api.Infrastructure.Filters;
 using Assignment.AzureWeather.Api.Services;
 using Assignment.AzureWeather.Infrastructure.Extensions;
-using Assignment.AzureWeather.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Assignment.AzureWeather.Api;
 
