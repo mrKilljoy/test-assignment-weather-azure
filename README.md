@@ -1,4 +1,4 @@
-# Assignment.AzureWeather
+# ⛅ Assignment.AzureWeather ☔
 A solution that includes a couple independent services: a service with Azure Functions (_Assignment.AzureWeather.Function_) and a web API (_Assignment.AzureWeather.Api_). Additionally, the frontend app is located in UI/weather_app folder.
 
 **Notes:**
